@@ -1,282 +1,193 @@
-# Karen Vision - Sistema de Pedidos con Publicidad
+# 🏪 KarenVision - Sistema de Pedidos con Publicidad
 
-## Descripción
+[![.NET](https://img.shields.io/badge/.NET-8.0-blue.svg)](https://dotnet.microsoft.com/)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-orange.svg)](https://www.mysql.com/)
+[![WPF](https://img.shields.io/badge/WPF-Windows-lightblue.svg)](https://docs.microsoft.com/en-us/dotnet/desktop/wpf/)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-Karen Vision es una aplicación de escritorio desarrollada en C# WPF que implementa un sistema de pedidos con publicidad interactiva. La aplicación requiere que los usuarios vean publicidad antes de poder acceder al sistema de pedidos, creando una experiencia única que combina marketing y funcionalidad comercial.
+## 📋 Descripción
 
-## Características Principales
+**KarenVision** es una innovadora aplicación de escritorio desarrollada en C# WPF que implementa un sistema de pedidos con publicidad interactiva obligatoria. Los usuarios deben ver publicidad antes de acceder al sistema de pedidos, creando una experiencia única que combina marketing efectivo con funcionalidad comercial.
+
+## ✨ Características Principales
 
 ### 🎯 Funcionalidades Core
-- **Pantalla de publicidad obligatoria**: Los usuarios deben interactuar con la publicidad antes de acceder al sistema
-- **Sistema de pedidos completo**: Selección de productos, gestión de carrito y procesamiento de pedidos
-- **Gestión de clientes**: Registro y búsqueda de clientes con validación de datos
-- **Conexión a base de datos MySQL**: Soporte para modo local y remoto con configuración flexible
-- **Interfaz moderna WPF**: Diseño atractivo y responsivo con animaciones
+- **🔒 Publicidad Obligatoria**: Sistema de bloqueo que requiere visualización completa de anuncios
+- **🛒 Sistema de Pedidos Completo**: Selección de productos, gestión de carrito y procesamiento
+- **👥 Gestión de Clientes**: Registro, búsqueda y validación de datos de clientes
+- **💾 Base de Datos MySQL**: Soporte completo con Entity Framework Core
+- **🎨 Interfaz Moderna**: Diseño WPF atractivo con estilos personalizados
 
 ### 🛡️ Seguridad y Robustez
-- **Manejo de errores robusto**: Logging detallado y manejo de excepciones
-- **Validación de datos**: Verificación de stock, validación de clientes y productos
-- **Transacciones de base de datos**: Consistencia de datos garantizada
-- **Configuración segura**: Cadenas de conexión configurables y parametrizadas
+- **⚡ Manejo de Errores**: Logging detallado y manejo robusto de excepciones
+- **✅ Validación de Datos**: Verificación de stock, clientes y productos
+- **🔄 Transacciones**: Consistencia de datos garantizada
+- **🔐 Configuración Segura**: Cadenas de conexión parametrizadas
 
-## Estructura del Proyecto
+## 🏗️ Arquitectura del Proyecto
 
 ```
 Karen_Vision/
-├── Models/                 # Entidades de datos
-│   ├── Producto.cs        # Modelo de productos
-│   ├── Cliente.cs         # Modelo de clientes
-│   ├── Pedido.cs          # Modelo de pedidos
-│   └── DetallePedido.cs   # Modelo de detalles de pedido
-├── Data/                   # Contexto de base de datos
-│   └── KarenVisionContext.cs
-├── Services/               # Lógica de negocio
-│   ├── IProductoService.cs & ProductoService.cs
-│   ├── IClienteService.cs & ClienteService.cs
-│   └── IPedidoService.cs & PedidoService.cs
-├── Views/                  # Interfaces de usuario
-│   ├── MainWindow.xaml    # Ventana principal
-│   ├── PublicidadWindow.xaml # Ventana de publicidad
-│   └── PedidosWindow.xaml # Sistema de pedidos
-├── Scripts/                # Scripts de base de datos
-│   └── crear_base_datos.sql
-├── appsettings.json       # Configuración de la aplicación
-└── KarenVision.csproj     # Archivo de proyecto
+├── 📁 Models/                 # Entidades de datos
+│   ├── Producto.cs           # Modelo de productos
+│   ├── Cliente.cs            # Modelo de clientes  
+│   ├── Pedido.cs             # Modelo de pedidos
+│   └── DetallePedido.cs      # Detalles de pedido
+├── 📁 Data/                  # Contexto de base de datos
+│   └── KarenVisionContext.cs # Context de Entity Framework
+├── 📁 Services/              # Lógica de negocio
+│   ├── Interfaces/           # Contratos de servicios
+│   ├── ProductoService.cs    # Servicio de productos
+│   ├── ClienteService.cs     # Servicio de clientes
+│   └── PedidoService.cs      # Servicio de pedidos
+├── 📁 Views/                 # Interfaces WPF
+│   ├── MainWindow.xaml       # Ventana principal
+│   ├── PublicidadWindow.xaml # Pantalla de publicidad
+│   └── PedidosWindow.xaml    # Sistema de pedidos
+├── 📁 Scripts/               # Scripts de base de datos
+│   ├── configurar_usuario.sql    # Configuración MySQL
+│   ├── crear_base_datos.sql      # Estructura de BD
+│   ├── datos_ejemplo.sql         # Datos de prueba
+│   └── setup_mysql.ps1           # Script automático
+└── 📁 Documentation/         # Documentación
+    ├── CONFIGURACION_MYSQL.md
+    └── ESTADO_FINAL.md
 ```
 
-## Requisitos del Sistema
+## 🚀 Inicio Rápido
 
-### Software Requerido
-- **.NET 8.0** o superior
-- **MySQL Server 8.0** o superior
-- **Visual Studio Code** con extensiones de C#
-- **Windows 10** o superior
+### 📋 Requisitos Previos
 
-### Dependencias NuGet
-- `Microsoft.EntityFrameworkCore` (8.0.8)
-- `Pomelo.EntityFrameworkCore.MySql` (8.0.2)
-- `Microsoft.Extensions.Configuration` (8.0.0)
-- `Microsoft.Extensions.DependencyInjection` (8.0.0)
-- `Microsoft.Extensions.Hosting` (8.0.0)
-- `Microsoft.Extensions.Logging` (8.0.0)
+- **.NET 8.0 SDK** o superior
+- **MySQL 8.0+** instalado y ejecutándose
+- **Windows 10/11** (para WPF)
+- **Visual Studio Code** o **Visual Studio** (recomendado)
 
-## Instalación y Configuración
+### ⚡ Instalación Rápida
 
-### 1. Configuración de la Base de Datos
+1. **Clonar el repositorio**
+```bash
+git clone https://github.com/TU_USUARIO/Karen_Vision.git
+cd Karen_Vision
+```
+
+2. **Configurar MySQL (Automático)**
+```powershell
+.\Scripts\setup_mysql.ps1
+```
+
+3. **Ejecutar la aplicación**
+```bash
+dotnet run
+```
+
+### 🔧 Configuración Manual de MySQL
+
+Si prefieres configurar manualmente:
 
 ```bash
-# Conectarse a MySQL como administrador
-mysql -u root -p
-
-# Ejecutar el script de configuración automática (RECOMENDADO)
-.\Scripts\setup_mysql.ps1
-
-# O configuración manual:
 # 1. Crear usuario y base de datos
 mysql -u root -p < Scripts/configurar_usuario.sql
 
-# 2. Crear tablas y estructura
-mysql -u root -p < Scripts/crear_base_datos.sql
+# 2. Crear estructura de tablas
+mysql -u root -p < Scripts/crear_base_datos.sql  
 
 # 3. Insertar datos de ejemplo
 mysql -u pvtouch -pfamilia karen_local < Scripts/datos_ejemplo.sql
 ```
 
-### 2. Configuración de la Aplicación
+## 📊 Base de Datos
 
-La configuración ya está establecida en `appsettings.json`:
-
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Server=localhost;Database=karen_local;Uid=pvtouch;Pwd=familia;SslMode=none;"
-  },
-  "AppSettings": {
-    "AdvertisementDuration": 10,
-    "RequireAdvertisementInteraction": true
-  }
-}
-```
-
-**Configuración Actual:**
+### Configuración por Defecto
 - **Base de datos**: `karen_local`
-- **Usuario**: `pvtouch`  
+- **Usuario**: `pvtouch`
 - **Password**: `familia`
-- **Servidor**: `localhost`
-
-### 3. Compilación y Ejecución
-
-```bash
-# Restaurar dependencias
-dotnet restore
-
-# Compilar el proyecto
-dotnet build
-
-# Ejecutar la aplicación
-dotnet run
-```
-
-## Uso de la Aplicación
-
-### Flujo Principal
-
-1. **Inicio**: La aplicación muestra la ventana principal con opciones de navegación
-2. **Publicidad**: El usuario debe ver la publicidad completa o interactuar con ella
-3. **Acceso Desbloqueado**: Una vez vista la publicidad, se habilita el acceso al sistema de pedidos
-4. **Gestión de Pedidos**: Selección de productos, datos del cliente y confirmación de pedidos
-
-### Funcionalidades Detalladas
-
-#### Sistema de Publicidad
-- **Duración configurable**: Tiempo de visualización personalizable
-- **Interacción opcional**: Los usuarios pueden interactuar para obtener información adicional
-- **Contador visual**: Progreso y tiempo restante claramente visible
-- **Prevención de omisión**: No se puede cerrar hasta completar el tiempo mínimo
-
-#### Sistema de Pedidos
-- **Búsqueda de productos**: Filtrado por nombre con resultados en tiempo real
-- **Gestión de carrito**: Agregar, modificar cantidades y eliminar productos
-- **Validación de stock**: Verificación automática de disponibilidad
-- **Datos del cliente**: Registro de nuevos clientes o búsqueda de existentes
-- **Confirmación de pedidos**: Proceso guiado con resumen y confirmación final
-
-## Configuración de Base de Datos
+- **Servidor**: `localhost:3306`
 
 ### Estructura de Tablas
+- **`clientes`** - Información de clientes con ID único
+- **`productos`** - Catálogo con precios y stock
+- **`pedidos`** - Órdenes con estado y totales  
+- **`detalles_pedido`** - Items individuales por pedido
 
-La base de datos incluye las siguientes tablas principales:
+## 🎮 Uso de la Aplicación
 
-- **clientes**: Información de clientes con ID de identificación único
-- **productos**: Catálogo de productos con precios y stock
-- **pedidos**: Registros de pedidos con estados y totales
-- **detalles_pedido**: Líneas de pedido con productos y cantidades
+### Flujo Principal
+1. **🏠 Inicio**: Ventana principal con opciones de navegación
+2. **📺 Publicidad**: Visualización obligatoria de anuncios (configurable)
+3. **🔓 Acceso**: Una vez completada la publicidad, acceso al sistema
+4. **🛍️ Pedidos**: Selección de productos, datos del cliente y confirmación
 
-### Datos de Ejemplo
+### Capturas de Pantalla
 
-El script incluye datos de prueba:
-- 15 productos tecnológicos con precios y stock
-- 5 clientes de ejemplo
-- 5 pedidos con diferentes estados
-- Detalles completos de pedidos
+| Ventana Principal | Publicidad | Sistema de Pedidos |
+|:---:|:---:|:---:|
+| ![Main](docs/images/main-window.png) | ![Ad](docs/images/ad-window.png) | ![Orders](docs/images/orders-window.png) |
 
-## Arquitectura Técnica
+## 🛠️ Desarrollo
 
-### Patrones Implementados
-
-- **Repository Pattern**: A través de servicios para acceso a datos
-- **Dependency Injection**: Configuración completa con Microsoft.Extensions
-- **MVVM Pattern**: Separación de lógica y presentación en WPF
-- **Unit of Work**: Transacciones coordinadas en operaciones complejas
-
-### Logging y Monitoreo
-
-- **Structured Logging**: Logs detallados con diferentes niveles
-- **Error Handling**: Manejo robusto de excepciones
-- **Performance Tracking**: Monitoreo de operaciones de base de datos
-
-## Personalización
-
-### Configuración de Publicidad
-
-```json
-"AppSettings": {
-    "AdvertisementDuration": 15,        // Duración en segundos
-    "RequireAdvertisementInteraction": false  // Si requiere interacción
-}
-```
-
-### Configuración de Base de Datos
-
-#### Modo Local
-```json
-"DefaultConnection": "Server=localhost;Database=KarenVisionDB;Uid=root;Pwd=password;SslMode=none;"
-```
-
-#### Modo Remoto
-```json
-"DefaultConnection": "Server=mi-servidor.com;Port=3306;Database=KarenVisionDB;Uid=usuario;Pwd=password;SslMode=Required;"
-```
-
-## Mantenimiento
-
-### Backup de Base de Datos
-
+### Compilar el Proyecto
 ```bash
-mysqldump -u root -p KarenVisionDB > backup_karenvision.sql
+dotnet build
 ```
 
-### Actualización de Stock
-
-```sql
-UPDATE productos SET stock = stock + 10 WHERE nombre = 'Laptop Dell Inspiron 15';
+### Ejecutar Tests (cuando estén disponibles)
+```bash
+dotnet test
 ```
 
-### Consultas Útiles
-
-```sql
--- Pedidos por estado
-SELECT estado, COUNT(*) as total FROM pedidos GROUP BY estado;
-
--- Productos más vendidos
-SELECT p.nombre, SUM(dp.cantidad) as total_vendido
-FROM productos p
-JOIN detalles_pedido dp ON p.id = dp.producto_id
-GROUP BY p.id, p.nombre
-ORDER BY total_vendido DESC;
-
--- Clientes con más pedidos
-SELECT c.nombre_completo, COUNT(pe.id) as total_pedidos
-FROM clientes c
-LEFT JOIN pedidos pe ON c.id = pe.cliente_id
-GROUP BY c.id, c.nombre_completo
-ORDER BY total_pedidos DESC;
+### Publicar para Producción
+```bash
+dotnet publish -c Release -r win-x64 --self-contained
 ```
 
-## Desarrollo y Contribución
+## 📖 Documentación Adicional
 
-### Extensiones Recomendadas para VS Code
+- [📋 Configuración de MySQL](CONFIGURACION_MYSQL.md)
+- [🎯 Estado del Proyecto](ESTADO_FINAL.md)  
+- [🔧 Guía de Desarrollo](docs/DESARROLLO.md)
+- [📝 Notas de Versión](CHANGELOG.md)
 
-- C# for Visual Studio Code
-- .NET Extension Pack
-- MySQL (para gestión de base de datos)
-- GitLens (para control de versiones)
+## 🤝 Contribuir
 
-### Estructura de Desarrollo
+¡Las contribuciones son bienvenidas! Por favor:
 
-1. **Models**: Agregar nuevas entidades siguiendo el patrón existente
-2. **Services**: Implementar lógica de negocio con interfaces
-3. **Views**: Crear nuevas ventanas siguiendo los estilos establecidos
-4. **Data**: Configurar relaciones en el contexto de Entity Framework
+1. Haz fork del proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
 
-## Solución de Problemas Comunes
+## 📋 Roadmap
 
-### Error de Conexión a Base de Datos
-- Verificar que MySQL esté ejecutándose
-- Confirmar credenciales en `appsettings.json`
-- Verificar que la base de datos exista
+- [ ] Tests unitarios
+- [ ] Reportes de ventas
+- [ ] Múltiples tipos de publicidad
+- [ ] Soporte para PostgreSQL
+- [ ] API REST
+- [ ] Aplicación móvil
 
-### Problemas de Stock
-- Los productos con stock 0 no pueden agregarse al carrito
-- Verificar datos en la tabla `productos`
+## 📄 Licencia
 
-### Errores de Validación
-- Los campos obligatorios deben completarse
-- El ID de identificación debe ser único por cliente
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para detalles.
 
-## Información de Contacto y Soporte
+## 👨‍💻 Autor
 
-Para soporte técnico o consultas sobre el desarrollo:
+**Desarrollado con ❤️ por el equipo de KarenVision**
 
-- **Documentación**: Consultar comentarios en el código fuente
-- **Logs**: Revisar archivos de log para diagnóstico de errores
-- **Base de datos**: Verificar integridad de datos regularmente
+- 📧 Email: contacto@karenvision.com
+- 🐦 Twitter: [@KarenVisionApp](https://twitter.com/KarenVisionApp)
+- 💼 LinkedIn: [KarenVision](https://linkedin.com/company/karenvision)
 
-## Licencia
+## 🙏 Reconocimientos
 
-Este proyecto es desarrollado como ejemplo educativo y comercial. Todos los derechos reservados.
+- [Entity Framework Core](https://docs.microsoft.com/ef/core/)
+- [MySQL](https://www.mysql.com/)
+- [.NET Community](https://dotnet.microsoft.com/platform/community)
+- [WPF Community](https://github.com/dotnet/wpf)
 
 ---
 
-**Karen Vision v1.0** - Sistema de Pedidos con Publicidad Interactiva
-Desarrollado con ❤️ usando C# WPF y MySQL
+⭐ **¡Si te gusta este proyecto, dale una estrella!** ⭐
+
+![KarenVision Logo](docs/images/karen-vision-banner.png)
