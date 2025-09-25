@@ -1,0 +1,329 @@
+<Window x:Class="KarenVision.Views.PedidosWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Sistema de Pedidos - Karen Vision" 
+        Height="700" Width="1200"
+        WindowStartupLocation="CenterScreen"
+        MinHeight="600" MinWidth="800">
+    
+    <Grid>
+        <!-- Fondo principal -->
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#F5F5F5" Offset="0"/>
+                <GradientStop Color="#EEEEEE" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Border Grid.Row="0" 
+                    Background="White" 
+                    CornerRadius="10,10,0,0" 
+                    Padding="20,15"
+                    Margin="0,0,0,2">
+                <Border.Effect>
+                    <DropShadowEffect Color="Gray" Direction="315" ShadowDepth="3" Opacity="0.3"/>
+                </Border.Effect>
+                
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <StackPanel Grid.Column="0" Orientation="Vertical">
+                        <TextBlock Text="Sistema de Pedidos" 
+                                  FontSize="24" 
+                                  FontWeight="Bold" 
+                                  Foreground="#1976D2"/>
+                        <TextBlock x:Name="TxtBienvenida" 
+                                  Text="Seleccione productos y complete los datos del cliente" 
+                                  FontSize="14" 
+                                  Foreground="#666666"/>
+                    </StackPanel>
+                    
+                    <Button Grid.Column="1" 
+                            x:Name="BtnVolver" 
+                            Content="← Volver" 
+                            Style="{StaticResource SecondaryButton}"
+                            Click="BtnVolver_Click"/>
+                </Grid>
+            </Border>
+
+            <!-- Contenido principal -->
+            <Border Grid.Row="1" 
+                    Background="White" 
+                    CornerRadius="0" 
+                    Padding="20">
+                <Border.Effect>
+                    <DropShadowEffect Color="Gray" Direction="315" ShadowDepth="3" Opacity="0.3"/>
+                </Border.Effect>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="5"/>
+                        <ColumnDefinition Width="1.5*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Panel izquierdo - Productos -->
+                    <Grid Grid.Column="0">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Título y búsqueda de productos -->
+                        <StackPanel Grid.Row="0" Margin="0,0,0,15">
+                            <TextBlock Text="Productos Disponibles" 
+                                      FontSize="18" 
+                                      FontWeight="Bold" 
+                                      Foreground="#333333" 
+                                      Margin="0,0,0,10"/>
+                            
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                
+                                <TextBox x:Name="TxtBuscarProducto" 
+                                        Grid.Column="0"
+                                        Style="{StaticResource FormTextBox}"
+                                        Margin="0,0,10,0"
+                                        KeyUp="TxtBuscarProducto_KeyUp"
+                                        Tag="Buscar productos..."/>
+                                
+                                <Button x:Name="BtnBuscarProducto" 
+                                       Grid.Column="1"
+                                       Content="🔍" 
+                                       Style="{StaticResource PrimaryButton}"
+                                       Click="BtnBuscarProducto_Click"/>
+                            </Grid>
+                        </StackPanel>
+
+                        <!-- Lista de productos -->
+                        <DataGrid x:Name="GridProductos" 
+                                 Grid.Row="2"
+                                 AutoGenerateColumns="False" 
+                                 CanUserAddRows="False"
+                                 CanUserDeleteRows="False"
+                                 CanUserReorderColumns="False"
+                                 CanUserResizeRows="False"
+                                 SelectionMode="Single"
+                                 GridLinesVisibility="Horizontal"
+                                 HeadersVisibility="Column"
+                                 RowHeaderWidth="0">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Nombre" Binding="{Binding Nombre}" Width="*" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Precio" Binding="{Binding Precio, StringFormat=C}" Width="80" IsReadOnly="True"/>
+                                <DataGridTextColumn Header="Stock" Binding="{Binding Stock}" Width="60" IsReadOnly="True"/>
+                                <DataGridTemplateColumn Header="Acción" Width="80">
+                                    <DataGridTemplateColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Button Content="+" 
+                                                   Style="{StaticResource PrimaryButton}"
+                                                   FontSize="16"
+                                                   FontWeight="Bold"
+                                                   Padding="5"
+                                                   Margin="2"
+                                                   Click="BtnAgregarProducto_Click"
+                                                   Tag="{Binding}"/>
+                                        </DataTemplate>
+                                    </DataGridTemplateColumn.CellTemplate>
+                                </DataGridTemplateColumn>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+
+                    <!-- Separador -->
+                    <Rectangle Grid.Column="1" Fill="#E0E0E0" Width="1"/>
+
+                    <!-- Panel derecho - Carrito y Cliente -->
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Datos del cliente -->
+                        <GroupBox Grid.Row="0" 
+                                 Header="Datos del Cliente" 
+                                 Margin="0,0,0,15">
+                            <StackPanel Margin="10">
+                                <Label Content="ID Identificación:" Style="{StaticResource FormLabel}"/>
+                                <TextBox x:Name="TxtIdIdentificacion" 
+                                        Style="{StaticResource FormTextBox}"
+                                        LostFocus="TxtIdIdentificacion_LostFocus"/>
+                                
+                                <Label Content="Nombre Completo:" Style="{StaticResource FormLabel}"/>
+                                <TextBox x:Name="TxtNombreCompleto" 
+                                        Style="{StaticResource FormTextBox}"/>
+                                
+                                <Label Content="Email (Opcional):" Style="{StaticResource FormLabel}"/>
+                                <TextBox x:Name="TxtEmail" 
+                                        Style="{StaticResource FormTextBox}"/>
+                                
+                                <Label Content="Teléfono (Opcional):" Style="{StaticResource FormLabel}"/>
+                                <TextBox x:Name="TxtTelefono" 
+                                        Style="{StaticResource FormTextBox}"/>
+                                
+                                <Button x:Name="BtnBuscarCliente" 
+                                       Content="Buscar Cliente Existente" 
+                                       Style="{StaticResource SecondaryButton}"
+                                       Click="BtnBuscarCliente_Click"
+                                       Margin="5,10,5,0"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <!-- Carrito de compras -->
+                        <GroupBox Grid.Row="1" 
+                                 Header="Carrito de Compras">
+                            <Grid Margin="10">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <!-- Lista de productos en carrito -->
+                                <DataGrid x:Name="GridCarrito" 
+                                         Grid.Row="0"
+                                         AutoGenerateColumns="False" 
+                                         CanUserAddRows="False"
+                                         CanUserDeleteRows="False"
+                                         CanUserReorderColumns="False"
+                                         CanUserResizeRows="False"
+                                         SelectionMode="Single"
+                                         GridLinesVisibility="Horizontal"
+                                         HeadersVisibility="Column"
+                                         RowHeaderWidth="0"
+                                         MaxHeight="200">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Producto" 
+                                                           Binding="{Binding Producto.Nombre}" 
+                                                           Width="*" 
+                                                           IsReadOnly="True"/>
+                                        <DataGridTextColumn Header="Precio" 
+                                                           Binding="{Binding PrecioUnitario, StringFormat=C}" 
+                                                           Width="60" 
+                                                           IsReadOnly="True"/>
+                                        <DataGridTemplateColumn Header="Cant." Width="50">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBox Text="{Binding Cantidad, UpdateSourceTrigger=PropertyChanged}" 
+                                                            TextAlignment="Center"
+                                                            BorderThickness="0"
+                                                            Background="Transparent"
+                                                            LostFocus="TxtCantidad_LostFocus"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTextColumn Header="Subtotal" 
+                                                           Binding="{Binding Subtotal, StringFormat=C}" 
+                                                           Width="70" 
+                                                           IsReadOnly="True"/>
+                                        <DataGridTemplateColumn Header="" Width="30">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Button Content="✖" 
+                                                           Style="{StaticResource SecondaryButton}"
+                                                           FontSize="10"
+                                                           Padding="2"
+                                                           Margin="1"
+                                                           Click="BtnEliminarDelCarrito_Click"
+                                                           Tag="{Binding}"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+
+                                <!-- Total -->
+                                <Border Grid.Row="1" 
+                                       Background="#E8F5E8" 
+                                       CornerRadius="5" 
+                                       Padding="10" 
+                                       Margin="0,10,0,0">
+                                    <StackPanel>
+                                        <TextBlock x:Name="TxtTotalItems" 
+                                                  Text="Items: 0" 
+                                                  FontWeight="Bold" 
+                                                  HorizontalAlignment="Right"/>
+                                        <TextBlock x:Name="TxtTotal" 
+                                                  Text="Total: $0.00" 
+                                                  FontSize="16" 
+                                                  FontWeight="Bold" 
+                                                  HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </GroupBox>
+
+                        <!-- Observaciones -->
+                        <GroupBox Grid.Row="2" 
+                                 Header="Observaciones (Opcional)" 
+                                 Margin="0,15,0,15">
+                            <TextBox x:Name="TxtObservaciones" 
+                                    Height="60" 
+                                    AcceptsReturn="True" 
+                                    TextWrapping="Wrap" 
+                                    VerticalScrollBarVisibility="Auto"
+                                    Style="{StaticResource FormTextBox}"/>
+                        </GroupBox>
+
+                        <!-- Botones de acción -->
+                        <StackPanel Grid.Row="3" Orientation="Vertical">
+                            <Button x:Name="BtnLimpiarCarrito" 
+                                   Content="🗑 Limpiar Carrito" 
+                                   Style="{StaticResource SecondaryButton}"
+                                   Click="BtnLimpiarCarrito_Click"
+                                   Margin="5,0"/>
+                            
+                            <Button x:Name="BtnConfirmarPedido" 
+                                   Content="✅ Confirmar Pedido" 
+                                   Style="{StaticResource PrimaryButton}"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Click="BtnConfirmarPedido_Click"
+                                   Margin="5,10,5,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- Footer -->
+            <Border Grid.Row="2" 
+                    Background="White" 
+                    CornerRadius="0,0,10,10" 
+                    Padding="20,10">
+                <Border.Effect>
+                    <DropShadowEffect Color="Gray" Direction="315" ShadowDepth="3" Opacity="0.3"/>
+                </Border.Effect>
+                
+                <Grid>
+                    <TextBlock Text="Sistema de Pedidos Karen Vision - Versión 1.0" 
+                              FontSize="12" 
+                              Foreground="#999999" 
+                              HorizontalAlignment="Left"/>
+                    
+                    <TextBlock x:Name="TxtEstadoConexion" 
+                              Text="Estado: Conectado" 
+                              FontSize="12" 
+                              Foreground="Green" 
+                              HorizontalAlignment="Right"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

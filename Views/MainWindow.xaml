@@ -1,0 +1,109 @@
+<Window x:Class="KarenVision.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Karen Vision - Sistema de Pedidos" 
+        Height="600" Width="800"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="CanResize">
+    
+    <Grid>
+        <!-- Fondo principal -->
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#E3F2FD" Offset="0"/>
+                <GradientStop Color="#BBDEFB" Offset="1"/>
+            </LinearGradientBrush>
+        </Grid.Background>
+
+        <!-- Contenido principal -->
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <StackPanel Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Center" Margin="0,0,0,20">
+                <TextBlock Text="Karen Vision" 
+                          FontSize="32" 
+                          FontWeight="Bold" 
+                          Foreground="#1976D2" 
+                          HorizontalAlignment="Center"/>
+                <TextBlock Text="Sistema de Pedidos con Publicidad Interactiva" 
+                          FontSize="16" 
+                          Foreground="#616161" 
+                          HorizontalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Contenido central -->
+            <Border Grid.Row="1" 
+                    Background="White" 
+                    CornerRadius="10" 
+                    Padding="30"
+                    Margin="10">
+                <Border.Effect>
+                    <DropShadowEffect Color="Gray" Direction="315" ShadowDepth="5" Opacity="0.3"/>
+                </Border.Effect>
+
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <!-- Mensaje de bienvenida -->
+                    <TextBlock Text="¡Bienvenido al Sistema Karen Vision!" 
+                              FontSize="24" 
+                              FontWeight="Bold" 
+                              Foreground="#333333" 
+                              HorizontalAlignment="Center" 
+                              Margin="0,0,0,20"/>
+
+                    <TextBlock Text="Para acceder al sistema de pedidos, primero debe ver nuestra publicidad." 
+                              FontSize="16" 
+                              Foreground="#666666" 
+                              HorizontalAlignment="Center" 
+                              TextWrapping="Wrap" 
+                              TextAlignment="Center" 
+                              Margin="0,0,0,30"/>
+
+                    <!-- Botón para ver publicidad -->
+                    <Button x:Name="BtnVerPublicidad" 
+                            Content="▶ Ver Publicidad" 
+                            Style="{StaticResource PrimaryButton}"
+                            FontSize="18"
+                            Padding="30,15"
+                            Click="BtnVerPublicidad_Click">
+                        <Button.Effect>
+                            <DropShadowEffect Color="Gray" Direction="315" ShadowDepth="3" Opacity="0.5"/>
+                        </Button.Effect>
+                    </Button>
+
+                    <!-- Botón de pedidos (inicialmente deshabilitado) -->
+                    <Button x:Name="BtnAccederPedidos" 
+                            Content="🛒 Acceder a Pedidos" 
+                            Style="{StaticResource SecondaryButton}"
+                            FontSize="18"
+                            Padding="30,15"
+                            IsEnabled="False"
+                            Click="BtnAccederPedidos_Click">
+                        <Button.Effect>
+                            <DropShadowEffect Color="Gray" Direction="315" ShadowDepth="3" Opacity="0.5"/>
+                        </Button.Effect>
+                    </Button>
+
+                    <!-- Mensaje de estado -->
+                    <TextBlock x:Name="TxtEstado" 
+                              Text="Debe ver la publicidad para continuar" 
+                              FontSize="14" 
+                              Foreground="#FF5722" 
+                              HorizontalAlignment="Center" 
+                              Margin="0,20,0,0"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Footer -->
+            <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
+                <TextBlock Text="© 2024 Karen Vision - Sistema de Pedidos" 
+                          FontSize="12" 
+                          Foreground="#999999"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
