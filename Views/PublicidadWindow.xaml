@@ -49,62 +49,69 @@
                               HorizontalAlignment="Center"/>
                 </StackPanel>
 
-                <!-- Contenido publicitario -->
-                <StackPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <!-- Banner principal -->
-                    <Border Background="#E3F2FD" 
-                            CornerRadius="15" 
-                            Padding="30" 
-                            Margin="0,0,0,30">
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                            <!-- Imagen placeholder -->
-                            <Border Background="#BBDEFB" 
-                                    Width="150" 
-                                    Height="150" 
-                                    CornerRadius="10" 
-                                    Margin="0,0,30,0">
-                                <TextBlock Text="📱" 
-                                          FontSize="72" 
-                                          HorizontalAlignment="Center" 
-                                          VerticalAlignment="Center"/>
-                            </Border>
-
-                            <!-- Contenido del anuncio -->
-                            <StackPanel VerticalAlignment="Center">
-                                <TextBlock Text="Descubre Nuestros Productos" 
-                                          FontSize="28" 
-                                          FontWeight="Bold" 
-                                          Foreground="#1976D2" 
-                                          Margin="0,0,0,10"/>
-                                <TextBlock Text="✓ Calidad garantizada" 
-                                          FontSize="18" 
-                                          Margin="0,5"/>
-                                <TextBlock Text="✓ Precios competitivos" 
-                                          FontSize="18" 
-                                          Margin="0,5"/>
-                                <TextBlock Text="✓ Entrega rápida" 
-                                          FontSize="18" 
-                                          Margin="0,5"/>
-                                <TextBlock Text="✓ Atención personalizada" 
-                                          FontSize="18" 
-                                          Margin="0,5"/>
+                <!-- Contenido publicitario con imágenes rotativas -->
+                <Grid Grid.Row="1">
+                    <!-- Imagen de publicidad (cambiará automáticamente) -->
+                    <Image x:Name="ImagenPublicidad" 
+                           Stretch="Uniform" 
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           MaxHeight="450"
+                           MaxWidth="700"
+                           Margin="20">
+                        <Image.Effect>
+                            <DropShadowEffect Color="Gray" Direction="315" ShadowDepth="8" Opacity="0.3"/>
+                        </Image.Effect>
+                    </Image>
+                    
+                    <!-- Overlay con información adicional -->
+                    <Border Background="#80000000" 
+                            VerticalAlignment="Bottom" 
+                            Margin="20,0,20,20"
+                            CornerRadius="10"
+                            Padding="15">
+                        <StackPanel>
+                            <!-- Indicadores de imagen actual -->
+                            <StackPanel Orientation="Horizontal" 
+                                        HorizontalAlignment="Center" 
+                                        Margin="0,0,0,10">
+                                <Ellipse x:Name="Indicator1" Width="12" Height="12" Fill="#FF6B35" Margin="3"/>
+                                <Ellipse x:Name="Indicator2" Width="12" Height="12" Fill="#CCCCCC" Margin="3"/>
+                                <Ellipse x:Name="Indicator3" Width="12" Height="12" Fill="#CCCCCC" Margin="3"/>
+                                <Ellipse x:Name="Indicator4" Width="12" Height="12" Fill="#CCCCCC" Margin="3"/>
+                                <Ellipse x:Name="Indicator5" Width="12" Height="12" Fill="#CCCCCC" Margin="3"/>
                             </StackPanel>
+                            
+                            <!-- Información de imagen actual -->
+                            <TextBlock x:Name="TxtImagenInfo" 
+                                      Text="Imagen 1 de 5" 
+                                      FontSize="14" 
+                                      Foreground="White" 
+                                      HorizontalAlignment="Center" 
+                                      FontWeight="Bold"/>
                         </StackPanel>
                     </Border>
-
-                    <!-- Mensaje animado -->
-                    <TextBlock x:Name="TxtMensajeAnimado" 
-                              Text="🎉 ¡No te pierdas nuestras increíbles ofertas! 🎉" 
-                              FontSize="20" 
-                              FontWeight="Bold" 
-                              Foreground="#FF5722" 
-                              HorizontalAlignment="Center" 
-                              Margin="0,0,0,20">
-                        <TextBlock.RenderTransform>
-                            <ScaleTransform x:Name="ScaleTransform" ScaleX="1" ScaleY="1"/>
-                        </TextBlock.RenderTransform>
-                    </TextBlock>
-                </StackPanel>
+                    
+                    <!-- Mensaje animado opcional -->
+                    <Border Background="#80FF6B35"
+                            CornerRadius="20"
+                            Padding="15,8"
+                            HorizontalAlignment="Center" 
+                            VerticalAlignment="Top"
+                            Margin="0,30,0,0">
+                        <TextBlock x:Name="TxtMensajeAnimado" 
+                                  Text="🎉 ¡Descubre nuestras increíbles ofertas! 🎉" 
+                                  FontSize="18" 
+                                  FontWeight="Bold" 
+                                  Foreground="White" 
+                                  HorizontalAlignment="Center" 
+                                  VerticalAlignment="Center">
+                            <TextBlock.RenderTransform>
+                                <ScaleTransform x:Name="ScaleTransform" ScaleX="1" ScaleY="1"/>
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+                    </Border>
+                </Grid>
 
                 <!-- Barra de progreso -->
                 <StackPanel Grid.Row="2" Margin="0,30,0,20">

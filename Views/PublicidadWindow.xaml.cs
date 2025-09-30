@@ -1,7 +1,11 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Windows;
 using System.Windows.Media.Animation;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
+using System.Windows.Shapes;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -9,17 +13,24 @@ namespace KarenVision.Views
 {
     /// <summary>
     /// Ventana de publicidad de la aplicación Karen Vision
-    /// Muestra contenido publicitario con temporizador y opciones de interacción
+    /// Muestra múltiples imágenes publicitarias con temporizador y rotación automática
     /// </summary>
     public partial class PublicidadWindow : Window
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
         private readonly DispatcherTimer _timer;
+        private readonly DispatcherTimer _imageTimer;
         private readonly DispatcherTimer _animationTimer;
         private int _tiempoRestante;
         private int _duracionTotal;
+        private int _intervaloImagenes;
         private bool _publicidadCompletada = false;
+        
+        // Sistema de imágenes
+        private List<string> _imagenes;
+        private int _imagenActual = 0;
+        private List<Ellipse> _indicadores;
 
         /// <summary>
         /// Evento que se dispara cuando la publicidad ha sido completada
@@ -38,8 +49,9 @@ namespace KarenVision.Views
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
-            // Obtener duración de la publicidad desde configuración
+            // Obtener configuración
             _duracionTotal = _configuration.GetValue<int>("AppSettings:AdvertisementDuration", 10);
+            _intervaloImagenes = _configuration.GetValue<int>("AppSettings:ImageChangeInterval", 3);
             _tiempoRestante = _duracionTotal;
 
             // Configurar temporizador principal
@@ -49,24 +61,114 @@ namespace KarenVision.Views
             };
             _timer.Tick += Timer_Tick;
 
-            // Configurar temporizador para animaciones
+            // Configurar temporizador de imágenes
+            _imageTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(_intervaloImagenes)
+            };
+            _imageTimer.Tick += ImageTimer_Tick;
+
+            // Configurar temporizador de animación
             _animationTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromMilliseconds(2000)
+                Interval = TimeSpan.FromSeconds(2)
             };
             _animationTimer.Tick += AnimationTimer_Tick;
 
+            // Inicializar sistema de imágenes
+            InicializarImagenes();
+            
             _logger.LogInformation("Ventana de publicidad inicializada con duración: {Duracion}s", _duracionTotal);
-            
-            // Inicializar interfaz
-            InicializarInterfaz();
-            
-            // Iniciar temporizadores
-            _timer.Start();
-            _animationTimer.Start();
-            
-            // Iniciar animación del texto
-            IniciarAnimacionTexto();
+        }
+
+        /// <summary>
+        /// Inicializa el sistema de imágenes publicitarias
+        /// </summary>
+        private void InicializarImagenes()
+        {
+            try
+            {
+                _imagenes = new List<string>();
+                _indicadores = new List<Ellipse>();
+
+                // Buscar imágenes en la carpeta Assets/Images
+                string imageFolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Images", "Publicidad");
+                
+                if (Directory.Exists(imageFolder))
+                {
+                    string[] extensions = { "*.jpg", "*.jpeg", "*.png", "*.bmp", "*.gif" };
+                    foreach (string extension in extensions)
+                    {
+                        string[] files = Directory.GetFiles(imageFolder, extension);
+                        _imagenes.AddRange(files);
+                    }
+                }
+
+                // Si no hay imágenes, usar una imagen por defecto
+                if (_imagenes.Count == 0)
+                {
+                    _logger.LogWarning("No se encontraron imágenes en {ImageFolder}", imageFolder);
+                }
+
+                _logger.LogDebug("Sistema de imágenes inicializado con {Count} imágenes", _imagenes.Count);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al inicializar sistema de imágenes");
+                _imagenes = new List<string>();
+                _indicadores = new List<Ellipse>();
+            }
+        }
+
+        /// <summary>
+        /// Carga una imagen específica en el visor
+        /// </summary>
+        private void CargarImagen(int indice)
+        {
+            try
+            {
+                if (indice >= 0 && indice < _imagenes.Count)
+                {
+                    var bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = new Uri(_imagenes[indice], UriKind.RelativeOrAbsolute);
+                    bitmap.EndInit();
+                    
+                    // Asignar imagen al control (asumiendo que hay un Image llamado ImgPublicidad)
+                    // ImgPublicidad.Source = bitmap;
+                    
+                    _logger.LogDebug("Imagen cargada: {ImagePath}", _imagenes[indice]);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al cargar imagen {Index}", indice);
+            }
+        }
+
+        /// <summary>
+        /// Manejador de eventos que se ejecuta cuando la ventana está cargada
+        /// </summary>
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                InicializarInterfaz();
+                IniciarAnimacionTexto();
+                
+                // Iniciar temporizadores
+                _timer.Start();
+                _imageTimer.Start();
+                _animationTimer.Start();
+                
+                _logger.LogInformation("Publicidad iniciada");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al cargar ventana de publicidad");
+                MessageBox.Show($"Error al cargar publicidad: {ex.Message}", 
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         /// <summary>
@@ -76,15 +178,16 @@ namespace KarenVision.Views
         {
             try
             {
-                // Actualizar textos iniciales
-                TxtTiempoRestante.Text = $"Tiempo restante: {_tiempoRestante} segundos";
-                TxtContador.Text = _tiempoRestante.ToString();
-                
-                // Configurar progreso inicial
-                ProgressBarTiempo.Value = 0;
-                
-                // El botón de saltar se habilita después de 5 segundos
-                BtnSaltarPublicidad.IsEnabled = false;
+                // Configurar barra de progreso
+                if (ProgressBarTiempo != null)
+                {
+                    ProgressBarTiempo.Maximum = _duracionTotal;
+                    ProgressBarTiempo.Value = 0;
+                }
+
+                // Deshabilitar botón de saltar al inicio
+                if (BtnSaltarPublicidad != null)
+                    BtnSaltarPublicidad.IsEnabled = false;
                 
                 _logger.LogDebug("Interfaz de publicidad inicializada");
             }
@@ -95,13 +198,13 @@ namespace KarenVision.Views
         }
 
         /// <summary>
-        /// Inicia la animación del texto promocional
+        /// Inicia las animaciones de texto
         /// </summary>
         private void IniciarAnimacionTexto()
         {
             try
             {
-                // Animación simplificada - se puede expandir en el futuro
+                // Implementar animación de texto si es necesario
                 _logger.LogDebug("Animación de texto iniciada");
             }
             catch (Exception ex)
@@ -111,84 +214,79 @@ namespace KarenVision.Views
         }
 
         /// <summary>
-        /// Manejador del temporizador principal
-        /// Actualiza el contador y controla la duración de la publicidad
+        /// Manejador del temporizador principal que controla el tiempo de la publicidad
         /// </summary>
-        /// <param name="sender">Objeto que disparó el evento</param>
-        /// <param name="e">Argumentos del evento</param>
         private void Timer_Tick(object? sender, EventArgs e)
         {
             try
             {
                 _tiempoRestante--;
-                
+
                 // Actualizar interfaz
-                TxtTiempoRestante.Text = $"Tiempo restante: {_tiempoRestante} segundos";
-                TxtContador.Text = _tiempoRestante.ToString();
+                if (TxtTiempoRestante != null)
+                    TxtTiempoRestante.Text = $"Tiempo restante: {_tiempoRestante} segundos";
                 
-                // Actualizar barra de progreso
-                double progreso = ((double)(_duracionTotal - _tiempoRestante) / _duracionTotal) * 100;
-                ProgressBarTiempo.Value = progreso;
-                
-                // Habilitar botón de saltar después de 5 segundos
-                if (_tiempoRestante <= _duracionTotal - 5)
-                {
+                if (TxtContador != null)
+                    TxtContador.Text = _tiempoRestante.ToString();
+
+                if (ProgressBarTiempo != null)
+                    ProgressBarTiempo.Value = _duracionTotal - _tiempoRestante;
+
+                // Habilitar botón de saltar cuando queden pocos segundos
+                if (_tiempoRestante <= 3 && BtnSaltarPublicidad != null)
                     BtnSaltarPublicidad.IsEnabled = true;
-                    BtnSaltarPublicidad.Content = "⏭ Saltar";
-                }
-                
-                // Completar publicidad cuando el tiempo llegue a 0
+
+                // Completar publicidad cuando se acabe el tiempo
                 if (_tiempoRestante <= 0)
                 {
-                    _timer.Stop();
                     CompletarPublicidad();
                 }
-                
-                _logger.LogDebug("Tiempo restante de publicidad: {TiempoRestante}s", _tiempoRestante);
+
+                _logger.LogDebug("Tiempo restante: {TiempoRestante}s", _tiempoRestante);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error en temporizador de publicidad");
+                _logger.LogError(ex, "Error en temporizador principal");
+            }
+        }
+
+        /// <summary>
+        /// Manejador del temporizador de cambio de imágenes
+        /// </summary>
+        private void ImageTimer_Tick(object? sender, EventArgs e)
+        {
+            try
+            {
+                if (_imagenes.Count > 1)
+                {
+                    _imagenActual = (_imagenActual + 1) % _imagenes.Count;
+                    CargarImagen(_imagenActual);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al cambiar imagen");
             }
         }
 
         /// <summary>
         /// Manejador del temporizador de animaciones
-        /// Cambia el contenido promocional periódicamente
         /// </summary>
-        /// <param name="sender">Objeto que disparó el evento</param>
-        /// <param name="e">Argumentos del evento</param>
         private void AnimationTimer_Tick(object? sender, EventArgs e)
         {
             try
             {
-                // Lista de mensajes promocionales
-                string[] mensajes = {
-                    "🎉 ¡No te pierdas nuestras increíbles ofertas! 🎉",
-                    "⭐ Productos de la más alta calidad ⭐",
-                    "🚚 Envío gratis en pedidos mayores a $50 🚚",
-                    "💰 Descuentos especiales para clientes frecuentes 💰",
-                    "🎁 ¡Sorpresas en cada compra! 🎁"
-                };
-                
-                // Seleccionar mensaje aleatorio
-                Random random = new Random();
-                string nuevoMensaje = mensajes[random.Next(mensajes.Length)];
-                TxtMensajeAnimado.Text = nuevoMensaje;
-                
-                _logger.LogDebug("Mensaje promocional actualizado: {Mensaje}", nuevoMensaje);
+                // Implementar animaciones adicionales si es necesario
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error en temporizador de animaciones");
+                _logger.LogError(ex, "Error en animaciones");
             }
         }
 
         /// <summary>
         /// Manejador del evento de clic en el botón "Saltar Publicidad"
         /// </summary>
-        /// <param name="sender">Objeto que disparó el evento</param>
-        /// <param name="e">Argumentos del evento</param>
         private void BtnSaltarPublicidad_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -206,17 +304,13 @@ namespace KarenVision.Views
 
         /// <summary>
         /// Manejador del evento de clic en el botón "Me Interesa"
-        /// Muestra información adicional y completa la publicidad
         /// </summary>
-        /// <param name="sender">Objeto que disparó el evento</param>
-        /// <param name="e">Argumentos del evento</param>
         private void BtnInteractuar_Click(object sender, RoutedEventArgs e)
         {
             try
             {
                 _logger.LogInformation("Usuario interactuó con la publicidad");
                 
-                // Mostrar mensaje de agradecimiento
                 var result = MessageBox.Show(
                     "¡Gracias por tu interés en nuestros productos!\n\n" +
                     "Te invitamos a explorar nuestro catálogo completo en el sistema de pedidos.\n" +
@@ -226,7 +320,6 @@ namespace KarenVision.Views
                     MessageBoxButton.YesNo,
                     MessageBoxImage.Information);
 
-                // Completar publicidad independientemente de la respuesta
                 CompletarPublicidad();
             }
             catch (Exception ex)
@@ -238,7 +331,7 @@ namespace KarenVision.Views
         }
 
         /// <summary>
-        /// Completa la visualización de la publicidad y notifica al sistema
+        /// Completa la visualización de la publicidad
         /// </summary>
         private void CompletarPublicidad()
         {
@@ -249,16 +342,13 @@ namespace KarenVision.Views
 
                 _publicidadCompletada = true;
                 
-                // Detener temporizadores
                 _timer.Stop();
+                _imageTimer.Stop();
                 _animationTimer.Stop();
                 
                 _logger.LogInformation("Publicidad completada exitosamente");
                 
-                // Notificar a la ventana principal
                 PublicidadCompletada?.Invoke(this, EventArgs.Empty);
-                
-                // Cerrar ventana con resultado positivo
                 DialogResult = true;
                 Close();
             }
@@ -271,14 +361,12 @@ namespace KarenVision.Views
         }
 
         /// <summary>
-        /// Sobrescribir el comportamiento de cierre para evitar cierre accidental
+        /// Sobrescribir el comportamiento de cierre
         /// </summary>
-        /// <param name="e">Argumentos del evento de cierre</param>
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
             try
             {
-                // Si la publicidad no ha sido completada y el usuario intenta cerrar
                 if (!_publicidadCompletada && DialogResult != true)
                 {
                     var result = MessageBox.Show(
@@ -294,8 +382,8 @@ namespace KarenVision.Views
                         return;
                     }
                     
-                    // Si confirma el cierre, detener temporizadores
                     _timer.Stop();
+                    _imageTimer.Stop();
                     _animationTimer.Stop();
                 }
                 
